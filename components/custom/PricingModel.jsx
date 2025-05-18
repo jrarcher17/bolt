@@ -11,11 +11,11 @@ function PricingModel() {
     const {userDetail,setUserDetail}=useContext(UserDetailContext);
     const UpdateToken=useMutation(api.users.UpdateToken)
     console.log(userDetail)
-     const [selectedOption,setSelectedOption]=useState();
+     const [selectedOption,setSelectedOption]=useState(0);
      
     const onPaymentSuccess=async()=>{
      
-        const token=Number(userDetail?.token)+Number(selectedOption?.value);
+        const token=Number(userDetail?.token)+Number(selectedOption);
         console.log(token);
         await UpdateToken({
             token:token,
@@ -38,7 +38,7 @@ function PricingModel() {
                 {/* <Button>Upgrade to {pricing.name}</Button> */}
                 <PayPalButtons 
                 disabled={!userDetail}
-                onClick={()=>{setSelectedOption(pricing);console.log(pricing.value)}}
+                onClick={()=>{setSelectedOption(pricing.value)}}
                 style={{ layout: "horizontal" }}
                 onApprove={()=>onPaymentSuccess()}
                 onCancel={()=>console.log("Payment Canceled")}
