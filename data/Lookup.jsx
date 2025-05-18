@@ -3,7 +3,7 @@ import dedent from "dedent";
 export default {
   SUGGSTIONS: ['Create ToDo App in React', 'Create Budget Track App', 'Create Gym Managment Portal Dashboard', 'Create Quizz App On History', 'Create Login Signup Screen'],
   HERO_HEADING: 'What do you want to build?',
-  HERO_DESC: 'Prompt, run, edit, and deploy full-stack web apps.',
+  HERO_DESC: 'Prompt, run, edit, and deploy full-stack <b>web</b> apps.',
   INPUT_PLACEHOLDER: 'What you want to build?',
   SIGNIN_HEADING: 'Continue With Bolt.New 2.0',
   SIGNIN_SUBHEADING: 'To use Bolt you must log into an existing account or create one.',
