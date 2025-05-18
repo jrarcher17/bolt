@@ -30,7 +30,7 @@ function Header() {
       <Link href={'/'}>
         <Image src={'/logo.png'} alt='Logo' width={40} height={40} />
         </Link>
-      {!userDetail?.name  ? <div className='flex gap-5'>
+      {!userDetail?.name  ? <div className='flex gap-3'>
             <Button variant="ghost" size="sm" onClick={setOpenLoginDialog}>Sign In</Button>
             <Button size="sm" onClick={setOpenLoginDialog}
             className="text-white" style={{
