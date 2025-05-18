@@ -21,7 +21,7 @@ function AppSideBar() {
     <Sidebar>
     <SidebarHeader className="p-5">
       <div className='flex justify-between items-center'>
-      <Image src={'/logo.png'} alt='log' width={30} height={30}/>
+      AI Code Editor
       <SidebarClose className='cursor-pointer h-6 w-6 font-thin' onClick={toggleSidebar} />
       </div>
         <Button className="mt-5"
