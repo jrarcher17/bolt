@@ -57,9 +57,9 @@ function Hero() {
                         onClick={() => onGenerate(userInput)}
                         className='bg-blue-500 p-2 h-10 w-10 rounded-md cursor-pointer' />}
                 </div>
-                <div>
+                {/* <div>
                     <Link className='h-5 w-5' />
-                </div>
+                </div> */}
             </div>
 
             <div className='flex mt-8 flex-wrap max-w-2xl items-center justify-center gap-3'>
