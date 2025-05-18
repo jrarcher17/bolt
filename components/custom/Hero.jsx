@@ -43,7 +43,7 @@ function Hero() {
     return (
         <div className='flex flex-col items-center mt-28 justify-center gap-2 p-10'>
             <h2 className='font-bold text-5xl'>{Lookup.HERO_HEADING}</h2>
-            <p className='text-gray-400 font-medium'>{Lookup.HERO_DESC}</p>
+            <p className='text-gray-400 text-lg font-medium'>{Lookup.HERO_DESC}</p>
             <div className='p-5 border rounded-xl max-w-xl w-full mt-3 '
                 style={{
                     backgroundColor: Colors.BACKGROUND
