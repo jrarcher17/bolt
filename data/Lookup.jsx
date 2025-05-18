@@ -5,9 +5,9 @@ export default {
   HERO_HEADING: 'What do you want to build?',
   HERO_DESC: 'Prompt, run, edit, and deploy full-stack web apps.',
   INPUT_PLACEHOLDER: 'How can we help you today?',
-  SIGNIN_HEADING: 'Continue With Bolt.New 2.0',
-  SIGNIN_SUBHEADING: 'To use Bolt you must log into an existing account or create one.',
-  SIGNIn_AGREEMENT_TEXT: 'By using Bolt, you agree to the collection of usage data for analytics.',
+  SIGNIN_HEADING: 'Continue With AI Code Editor',
+  SIGNIN_SUBHEADING: 'To use AI Code Editor you must log into an existing account or create one.',
+  SIGNIn_AGREEMENT_TEXT: 'By using AI Code Editor, you agree to the collection of usage data for analytics.',
 
 
   DEFAULT_FILE: {
@@ -75,32 +75,32 @@ export default config;
   PRICING_DESC:'Start with a free account to speed up your workflow on public projects or boost your entire team with instantly-opening production environments.',
   PRICING_OPTIONS:[
     {
-      name:'Basic',
+      name:'Pro',
       tokens:'50K',
       value:50000,
       desc:'Ideal for hobbyists and casual users for light, exploratory use.',
-      price:4.99
+      price:5.00
     },
     {
-      name:'Starter',
+      name:'Pro 10',
       tokens:'120K',
       value:120000,
-      desc:'Designed for professionals who need to use Bolt a few times per week.',
-      price:9.99
+      desc:'Designed for professionals who need to use AI Code Editor a few times per week.',
+      price:10.00
     },
     {
-      name:'Pro',
+      name:'Pro 20',
       tokens:'2.5M',
       value:2500000,
-      desc:'Designed for professionals who need to use Bolt a few times per week.',
-      price:19.99
+      desc:'Designed for professionals who need to use AI Code Editor a few times per week.',
+      price:20.00
     },
     {
-      name:'Unlimted (License)',
-      tokens:'Unmited',
-      value:999999999,
-      desc:'Designed for professionals who need to use Bolt a few times per week.',
-      price:49.99
+      name:'Pro 50',
+      tokens:'10M',
+      value:1000000,
+      desc:'Designed for professionals who need to use AI Code Editor a few times per week.',
+      price:50.00
     }
   ]
 
