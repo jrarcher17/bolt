@@ -31,8 +31,8 @@ function Header() {
         <Image src={'/logo.png'} alt='Logo' width={40} height={40} />
         </Link>
       {!userDetail?.name  ? <div className='flex gap-5'>
-            <Button variant="ghost" onClick={setOpenLoginDialog}>Sign In</Button>
-            <Button onClick={setOpenLoginDialog}
+            <Button variant="ghost" size="sm" onClick={setOpenLoginDialog}>Sign In</Button>
+            <Button size="sm" onClick={setOpenLoginDialog}
             className="text-white" style={{
                 backgroundColor:Colors.BLUE
             }}>Get Started</Button>
