@@ -26,6 +26,10 @@ function PricingModel() {
                 throw new Error('User ID not found. Please try logging in again.');
             }
 
+            if (!selectedOption) {
+                throw new Error('No pricing option selected');
+            }
+
             const currentTokens = Number(userDetail?.token) || 0;
             const newTokens = Number(selectedOption?.value) || 0;
             const totalTokens = currentTokens + newTokens;
@@ -60,6 +64,11 @@ function PricingModel() {
         toast.error('Payment failed. Please try again or contact support.');
     }
 
+    const handlePricingSelect = (pricing) => {
+        console.log('Setting selected option:', pricing);
+        setSelectedOption(pricing);
+    }
+
   return (
     <div className='mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 
     xl:grid-cols-4 gap-5'>
@@ -75,10 +84,7 @@ function PricingModel() {
                 {/* <Button>Upgrade to {pricing.name}</Button> */}
                 <PayPalButtons 
                 disabled={!userDetail?._id}
-                onClick={()=>{
-                    console.log('Setting selected option:', pricing);
-                    setSelectedOption(pricing);
-                }}
+                onClick={() => handlePricingSelect(pricing)}
                 style={{ layout: "horizontal" }}
                 onApprove={()=>onPaymentSuccess()}
                 onError={onError}
