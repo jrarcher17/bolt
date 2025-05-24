@@ -12,6 +12,8 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 import { ActionContext } from '@/context/ActionContext'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+
 function Provider({children}) {
   const [messages,setMessages]=useState();
   const [userDetail,setUserDetail]=useState();
@@ -24,21 +26,27 @@ function Provider({children}) {
   },[])
 
   const IsAutheicated=async()=>{
-    if(typeof window!==undefined)
-    {
-        const user=JSON.parse( localStorage.getItem('user'))
-        if(!user)
-        {
+    try {
+      if(typeof window!==undefined) {
+        const user=JSON.parse(localStorage.getItem('user'))
+        if(!user) {
           router.push('/')
-          return ;
+          return;
         }
-         //Fetch from Database
+        //Fetch from Database
         const result=await convex.query(api.users.GetUser,{
           email:user?.email
         })
+        if (!result) {
+          throw new Error('User not found in database');
+        }
         setUserDetail(result);
-        // console.log(result);
-       
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      toast.error('Failed to load user data. Please sign in again.');
+      localStorage.removeItem('user');
+      router.push('/');
     }
   }
 
@@ -56,14 +64,12 @@ function Provider({children}) {
           disableTransitionOnChange
           >
             <SidebarProvider defaultOpen={false} className="flex flex-col ">
-           
-              
               <Header/>
-                {children}
-                <div className='absolute'>
-             <AppSideBar/>
-             </div>
-          </SidebarProvider>
+              {children}
+              <div className='absolute'>
+                <AppSideBar/>
+              </div>
+            </SidebarProvider>
           </NextThemesProvider>
           </ActionContext.Provider>
         </MessagesContext.Provider>

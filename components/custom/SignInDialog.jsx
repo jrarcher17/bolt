@@ -12,47 +12,57 @@ import { Button } from '../ui/button'
 import { useGoogleLogin } from '@react-oauth/google';
 import { UserDetailContext } from '@/context/UserDetailContext';
 import axios from 'axios';
-import { useMutation } from 'convex/react';
+import { useMutation, useConvex } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import uuid4 from 'uuid4';
+import { toast } from 'sonner';
 
 function SignInDialog({ openDialog,closeDialog }) {
 const {userDetail,setUserDetail}=useContext(UserDetailContext);
 const CreateUser=useMutation(api.users.CreateUser);
+const convex=useConvex();
+
 const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      // console.log(tokenResponse);
-      const userInfo = await axios.get(
-        'https://www.googleapis.com/oauth2/v3/userinfo',
-        { headers: { Authorization: 'Bearer '+tokenResponse?.access_token } },
-      );
-  
-        // console.log(userInfo);
+      try {
+        const userInfo = await axios.get(
+          'https://www.googleapis.com/oauth2/v3/userinfo',
+          { headers: { Authorization: 'Bearer '+tokenResponse?.access_token } },
+        );
+    
         const user=userInfo.data;
         await CreateUser({
             name:user?.name,
             email:user?.email,
             picture:user?.picture,
             uid:uuid4()
-        })
+        });
 
-        if(typeof window!==undefined)
-        {
-            localStorage.setItem('user',JSON.stringify(user))
+        // Get the user data from Convex after creation
+        const convexUser = await convex.query(api.users.GetUser, {
+          email: user.email
+        });
+
+        if(typeof window!==undefined) {
+            localStorage.setItem('user',JSON.stringify(user));
         }
 
-
-        setUserDetail(userInfo?.data);
-        //Save this inside out Database 
+        setUserDetail(convexUser);
         closeDialog(false);
-        window.location.reload()
+        toast.success('Successfully signed in!');
+      } catch (error) {
+        console.error('Sign in error:', error);
+        toast.error('Failed to sign in. Please try again.');
+      }
     },
-    onError: errorResponse => console.log(errorResponse),
+    onError: errorResponse => {
+      console.error('Google sign in error:', errorResponse);
+      toast.error('Failed to sign in with Google. Please try again.');
+    },
   });
 
     return (
         <Dialog open={openDialog} onOpenChange={closeDialog}>
-
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle></DialogTitle>
@@ -69,7 +79,6 @@ const googleLogin = useGoogleLogin({
                 </DialogHeader>
             </DialogContent>
         </Dialog>
-
     )
 }
 
