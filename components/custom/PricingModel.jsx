@@ -81,29 +81,33 @@ function PricingModel() {
                 
                 <h2 className='font-bold text-4xl text-center mt-6'>${pricing.price}</h2>
 
-                {/* <Button>Upgrade to {pricing.name}</Button> */}
+                <Button 
+                    onClick={() => handlePricingSelect(pricing)}
+                    className="mb-2"
+                >
+                    Select {pricing.name}
+                </Button>
+
                 <PayPalButtons 
-                disabled={!userDetail?._id}
-                onClick={() => handlePricingSelect(pricing)}
-                style={{ layout: "horizontal" }}
-                onApprove={()=>onPaymentSuccess()}
-                onError={onError}
-                onCancel={()=>{
-                    // console.log("Payment Canceled");
-                    toast.error('Payment was cancelled');
-                }}
-                createOrder={(data,actions)=>{
-                    return actions.order.create({
-                        purchase_units:[
-                            {
-                                amount:{
-                                    value:pricing.price,
-                                    currency_code:'USD'
+                    disabled={!userDetail?._id || selectedOption?.name !== pricing.name}
+                    style={{ layout: "horizontal" }}
+                    onApprove={()=>onPaymentSuccess()}
+                    onError={onError}
+                    onCancel={()=>{
+                        toast.error('Payment was cancelled');
+                    }}
+                    createOrder={(data,actions)=>{
+                        return actions.order.create({
+                            purchase_units:[
+                                {
+                                    amount:{
+                                        value:pricing.price,
+                                        currency_code:'USD'
+                                    }
                                 }
-                            }
-                        ]
-                    })
-                }}
+                            ]
+                        })
+                    }}
                 />
             </div>
         ))}
