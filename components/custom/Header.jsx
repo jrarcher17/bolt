@@ -16,7 +16,7 @@ function Header() {
   const {action,setAction}=useContext(ActionContext);
   const path=usePathname();
   const [openLoginDialog,setOpenLoginDialog]=useState(false);
-  console.log(path?.includes('workspace'))
+  // console.log(path?.includes('workspace'))
 
   const onActionBtn=(action)=>{
     setAction({

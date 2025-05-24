@@ -11,13 +11,12 @@ function PricingModel() {
 
     const {userDetail,setUserDetail}=useContext(UserDetailContext);
     const UpdateToken=useMutation(api.users.UpdateToken)
-    console.log(userDetail)
+    // console.log(userDetail)
     const [selectedOption,setSelectedOption]=useState();
      
     const onPaymentSuccess=async()=>{
         try {
             const token=Number(userDetail?.token)+Number(selectedOption?.value);
-            console.log('john', userDetail);
             await UpdateToken({
                 token:token,
                 userId:userDetail?._id
@@ -54,7 +53,7 @@ function PricingModel() {
                 onApprove={()=>onPaymentSuccess()}
                 onError={onError}
                 onCancel={()=>{
-                    console.log("Payment Canceled");
+                    // console.log("Payment Canceled");
                     toast.error('Payment was cancelled');
                 }}
                 createOrder={(data,actions)=>{

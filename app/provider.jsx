@@ -37,7 +37,7 @@ function Provider({children}) {
           email:user?.email
         })
         setUserDetail(result);
-        console.log(result);
+        // console.log(result);
        
     }
   }
