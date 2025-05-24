@@ -40,21 +40,31 @@ const googleLogin = useGoogleLogin({
 
         // Create or get existing user
         console.log('Attempting to create/get user in Convex...');
-        const convexUser = await CreateUser({
-            name: user?.name || 'Anonymous',
-            email: user.email,
-            picture: user?.picture || '',
-            uid: uuid4()
-        });
-
-        console.log('Convex user data:', convexUser);
+        let convexUser;
+        try {
+            convexUser = await CreateUser({
+                name: user?.name || 'Anonymous',
+                email: user.email,
+                picture: user?.picture || '',
+                uid: uuid4()
+            });
+            console.log('Convex user data:', convexUser);
+        } catch (createError) {
+            console.error('Error creating user:', createError);
+            // Try to get existing user
+            try {
+                convexUser = await convex.query(api.users.GetUser, {
+                    email: user.email
+                });
+                console.log('Retrieved existing user:', convexUser);
+            } catch (getError) {
+                console.error('Error getting user:', getError);
+                throw new Error('Failed to create or retrieve user');
+            }
+        }
 
         if (!convexUser) {
             throw new Error('No user data returned from database');
-        }
-
-        if (!convexUser._id) {
-            throw new Error('User created but missing ID');
         }
 
         // Store user data

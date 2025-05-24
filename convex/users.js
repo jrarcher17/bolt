@@ -21,17 +21,17 @@ export const CreateUser=mutation({
 
             //if Not, Then add new user
             console.log('Creating new user with data:', args);
-            const result=await ctx.db.insert('users',{
+            const userId = await ctx.db.insert('users',{
                 name:args.name,
                 picture:args.picture,
                 email:args.email,
                 uid:args.uid,
                 token:50000
             });
-            console.log('New user insert result:', result);
+            console.log('New user insert result (ID):', userId);
 
             // Get the newly created user
-            const newUser = await ctx.db.get(result);
+            const newUser = await ctx.db.get(userId);
             console.log('Retrieved new user:', newUser);
             
             if (!newUser) {
