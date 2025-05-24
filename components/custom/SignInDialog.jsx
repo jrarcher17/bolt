@@ -25,34 +25,47 @@ const convex=useConvex();
 const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
+        // Get Google user info
         const userInfo = await axios.get(
           'https://www.googleapis.com/oauth2/v3/userinfo',
           { headers: { Authorization: 'Bearer '+tokenResponse?.access_token } },
         );
     
-        const user=userInfo.data;
+        const user = userInfo.data;
         console.log('Google user info:', user);
 
+        if (!user?.email) {
+            throw new Error('Failed to get user email from Google');
+        }
+
         // Create or get existing user
+        console.log('Attempting to create/get user in Convex...');
         const convexUser = await CreateUser({
-            name:user?.name,
-            email:user?.email,
-            picture:user?.picture,
-            uid:uuid4()
+            name: user?.name || 'Anonymous',
+            email: user.email,
+            picture: user?.picture || '',
+            uid: uuid4()
         });
 
         console.log('Convex user data:', convexUser);
 
-        if (!convexUser?._id) {
-            throw new Error('Failed to create/get user in database');
+        if (!convexUser) {
+            throw new Error('No user data returned from database');
         }
 
-        if(typeof window!==undefined) {
-            localStorage.setItem('user',JSON.stringify({
-                ...user,
-                _id: convexUser._id,
-                token: convexUser.token
-            }));
+        if (!convexUser._id) {
+            throw new Error('User created but missing ID');
+        }
+
+        // Store user data
+        const userData = {
+            ...user,
+            _id: convexUser._id,
+            token: convexUser.token || 0
+        };
+
+        if(typeof window !== 'undefined') {
+            localStorage.setItem('user', JSON.stringify(userData));
         }
 
         setUserDetail(convexUser);
@@ -60,7 +73,7 @@ const googleLogin = useGoogleLogin({
         toast.success('Successfully signed in!');
       } catch (error) {
         console.error('Sign in error:', error);
-        toast.error('Failed to sign in. Please try again.');
+        toast.error(error.message || 'Failed to sign in. Please try again.');
       }
     },
     onError: errorResponse => {
