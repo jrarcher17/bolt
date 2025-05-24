@@ -31,20 +31,28 @@ const googleLogin = useGoogleLogin({
         );
     
         const user=userInfo.data;
-        await CreateUser({
+        console.log('Google user info:', user);
+
+        // Create or get existing user
+        const convexUser = await CreateUser({
             name:user?.name,
             email:user?.email,
             picture:user?.picture,
             uid:uuid4()
         });
 
-        // Get the user data from Convex after creation
-        const convexUser = await convex.query(api.users.GetUser, {
-          email: user.email
-        });
+        console.log('Convex user data:', convexUser);
+
+        if (!convexUser?._id) {
+            throw new Error('Failed to create/get user in database');
+        }
 
         if(typeof window!==undefined) {
-            localStorage.setItem('user',JSON.stringify(user));
+            localStorage.setItem('user',JSON.stringify({
+                ...user,
+                _id: convexUser._id,
+                token: convexUser.token
+            }));
         }
 
         setUserDetail(convexUser);

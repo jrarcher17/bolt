@@ -10,31 +10,37 @@ export const CreateUser=mutation({
     },
     handler:async(ctx,args)=>{
         //If user already exist
-        const user=await ctx.db.query('users').filter((q)=>q.eq(q.field('email'),args.email)).collect()
-        // console.log(user)
-        //if Not , Then add new user
-        if(user?.length==0)
-        {
-            const result=await ctx.db.insert('users',{
-                name:args.name,
-                picture:args.picture,
-                email:args.email,
-                uid:args.uid,
-                token:50000
-            });
-            // console.log(result);
+        const existingUser=await ctx.db.query('users').filter((q)=>q.eq(q.field('email'),args.email)).collect();
+        
+        if(existingUser?.length > 0) {
+            return existingUser[0];
         }
+
+        //if Not, Then add new user
+        const result=await ctx.db.insert('users',{
+            name:args.name,
+            picture:args.picture,
+            email:args.email,
+            uid:args.uid,
+            token:50000
+        });
+
+        // Get the newly created user
+        const newUser = await ctx.db.get(result);
+        return newUser;
     }
 })
-
 
 export const GetUser=query({
     args:{
         email:v.string()
     },
     handler:async(ctx,args)=>{
-        const user=await ctx.db.query('users').filter((q)=>q.eq(q.field('email'),args.email)).collect();
-        return user[0];
+        const users=await ctx.db.query('users').filter((q)=>q.eq(q.field('email'),args.email)).collect();
+        if (!users || users.length === 0) {
+            throw new Error('User not found');
+        }
+        return users[0];
     }
 })
 

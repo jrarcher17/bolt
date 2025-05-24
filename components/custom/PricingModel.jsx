@@ -10,20 +10,32 @@ import { toast } from 'sonner'
 function PricingModel() {
     const {userDetail,setUserDetail}=useContext(UserDetailContext);
     const UpdateToken=useMutation(api.users.UpdateToken)
-    // console.log(userDetail)
     const [selectedOption,setSelectedOption]=useState();
+
+    useEffect(() => {
+        console.log('Current userDetail:', userDetail);
+    }, [userDetail]);
      
     const onPaymentSuccess=async()=>{
         try {
+            console.log('Payment success - userDetail:', userDetail);
+            console.log('Selected option:', selectedOption);
+
             if (!userDetail?._id) {
+                console.error('Missing user ID. Full userDetail:', userDetail);
                 throw new Error('User ID not found. Please try logging in again.');
             }
-
-            console.log(userDetail);
 
             const currentTokens = Number(userDetail?.token) || 0;
             const newTokens = Number(selectedOption?.value) || 0;
             const totalTokens = currentTokens + newTokens;
+
+            console.log('Updating tokens:', {
+                currentTokens,
+                newTokens,
+                totalTokens,
+                userId: userDetail._id
+            });
 
             await UpdateToken({
                 token: totalTokens,
@@ -63,7 +75,10 @@ function PricingModel() {
                 {/* <Button>Upgrade to {pricing.name}</Button> */}
                 <PayPalButtons 
                 disabled={!userDetail?._id}
-                onClick={()=>{setSelectedOption(pricing)}}
+                onClick={()=>{
+                    console.log('Setting selected option:', pricing);
+                    setSelectedOption(pricing);
+                }}
                 style={{ layout: "horizontal" }}
                 onApprove={()=>onPaymentSuccess()}
                 onError={onError}
