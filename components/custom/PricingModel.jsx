@@ -19,6 +19,8 @@ function PricingModel() {
                 throw new Error('User ID not found. Please try logging in again.');
             }
 
+            console.log(userDetail);
+
             const currentTokens = Number(userDetail?.token) || 0;
             const newTokens = Number(selectedOption?.value) || 0;
             const totalTokens = currentTokens + newTokens;
