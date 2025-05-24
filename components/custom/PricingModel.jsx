@@ -8,7 +8,6 @@ import { api } from '@/convex/_generated/api'
 import { toast } from 'sonner'
 
 function PricingModel() {
-
     const {userDetail,setUserDetail}=useContext(UserDetailContext);
     const UpdateToken=useMutation(api.users.UpdateToken)
     // console.log(userDetail)
@@ -16,15 +15,29 @@ function PricingModel() {
      
     const onPaymentSuccess=async()=>{
         try {
-            const token=Number(userDetail?.token)+Number(selectedOption?.value);
+            if (!userDetail?._id) {
+                throw new Error('User ID not found. Please try logging in again.');
+            }
+
+            const currentTokens = Number(userDetail?.token) || 0;
+            const newTokens = Number(selectedOption?.value) || 0;
+            const totalTokens = currentTokens + newTokens;
+
             await UpdateToken({
-                token:token,
-                userId:userDetail?._id
-            })
+                token: totalTokens,
+                userId: userDetail._id
+            });
+
+            // Update local user detail state
+            setUserDetail(prev => ({
+                ...prev,
+                token: totalTokens
+            }));
+
             toast.success('Payment successful! Tokens added to your account.')
         } catch (error) {
             console.error('Error updating tokens:', error);
-            toast.error('Payment successful but failed to update tokens. Please contact support.')
+            toast.error(error.message || 'Payment successful but failed to update tokens. Please contact support.')
         }
     }
 
@@ -47,7 +60,7 @@ function PricingModel() {
 
                 {/* <Button>Upgrade to {pricing.name}</Button> */}
                 <PayPalButtons 
-                disabled={!userDetail}
+                disabled={!userDetail?._id}
                 onClick={()=>{setSelectedOption(pricing)}}
                 style={{ layout: "horizontal" }}
                 onApprove={()=>onPaymentSuccess()}
