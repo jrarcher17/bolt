@@ -17,6 +17,7 @@ function PricingModel() {
     const onPaymentSuccess=async()=>{
         try {
             const token=Number(userDetail?.token)+Number(selectedOption?.value);
+            console.log('john', userDetail);
             await UpdateToken({
                 token:token,
                 userId:userDetail?._id
