@@ -18,8 +18,7 @@ function Pricing() {
         }}>
             <h2 className='text-lg'><span className='font-bold'>{userDetail?.token}</span> Token Left</h2>
             <div className=''>
-                <h2 className='font-medium'>Need more token?</h2>
-                <p>Upgrade your plan below</p>
+                <h2 className='font-medium'>Need more tokens?</h2>
             </div>
         </div>
         <PricingModel/>
