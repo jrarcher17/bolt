@@ -41,30 +41,38 @@ const googleLogin = useGoogleLogin({
         // Create or get existing user
         console.log('Attempting to create/get user in Convex...');
         let convexUser;
+        
+        // First try to get existing user
         try {
-            convexUser = await CreateUser({
-                name: user?.name || 'Anonymous',
-                email: user.email,
-                picture: user?.picture || '',
-                uid: uuid4()
+            console.log('Checking for existing user...');
+            convexUser = await convex.query(api.users.GetUser, {
+                email: user.email
             });
-            console.log('Convex user data:', convexUser);
-        } catch (createError) {
-            console.error('Error creating user:', createError);
-            // Try to get existing user
+            console.log('Found existing user:', convexUser);
+        } catch (getError) {
+            console.log('No existing user found, creating new user...');
+            // If user doesn't exist, create new user
             try {
-                convexUser = await convex.query(api.users.GetUser, {
-                    email: user.email
+                convexUser = await CreateUser({
+                    name: user?.name || 'Anonymous',
+                    email: user.email,
+                    picture: user?.picture || '',
+                    uid: uuid4()
                 });
-                console.log('Retrieved existing user:', convexUser);
-            } catch (getError) {
-                console.error('Error getting user:', getError);
-                throw new Error('Failed to create or retrieve user');
+                console.log('Created new user:', convexUser);
+            } catch (createError) {
+                console.error('Error creating user:', createError);
+                throw new Error('Failed to create new user');
             }
         }
 
         if (!convexUser) {
             throw new Error('No user data returned from database');
+        }
+
+        if (!convexUser._id) {
+            console.error('Invalid user data:', convexUser);
+            throw new Error('User data is missing ID');
         }
 
         // Store user data
@@ -73,6 +81,8 @@ const googleLogin = useGoogleLogin({
             _id: convexUser._id,
             token: convexUser.token || 0
         };
+
+        console.log('Storing user data:', userData);
 
         if(typeof window !== 'undefined') {
             localStorage.setItem('user', JSON.stringify(userData));

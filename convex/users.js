@@ -10,12 +10,14 @@ export const CreateUser=mutation({
     },
     handler:async(ctx,args)=>{
         try {
+            console.log('CreateUser called with args:', args);
+            
             //If user already exist
             const existingUser=await ctx.db.query('users').filter((q)=>q.eq(q.field('email'),args.email)).collect();
             console.log('Existing user query result:', existingUser);
             
             if(existingUser?.length > 0) {
-                console.log('Returning existing user:', existingUser[0]);
+                console.log('Found existing user:', existingUser[0]);
                 return existingUser[0];
             }
 
@@ -30,12 +32,22 @@ export const CreateUser=mutation({
             });
             console.log('New user insert result (ID):', userId);
 
+            if (!userId) {
+                throw new Error('Failed to insert new user - no ID returned');
+            }
+
             // Get the newly created user
             const newUser = await ctx.db.get(userId);
             console.log('Retrieved new user:', newUser);
             
             if (!newUser) {
                 throw new Error('Failed to retrieve newly created user');
+            }
+
+            // Verify the user data
+            if (!newUser._id || !newUser.email) {
+                console.error('Invalid user data:', newUser);
+                throw new Error('Created user has invalid data');
             }
             
             return newUser;
@@ -52,6 +64,7 @@ export const GetUser=query({
     },
     handler:async(ctx,args)=>{
         try {
+            console.log('GetUser called with email:', args.email);
             const users=await ctx.db.query('users').filter((q)=>q.eq(q.field('email'),args.email)).collect();
             console.log('GetUser query result:', users);
             
@@ -73,9 +86,11 @@ export const UpdateToken=mutation({
     },
     handler:async(ctx,args)=>{
         try {
+            console.log('UpdateToken called with:', args);
             const result=await ctx.db.patch(args.userId,{
                 token:args.token
             });
+            console.log('UpdateToken result:', result);
             return result;
         } catch (error) {
             console.error('Error in UpdateToken:', error);
