@@ -5,6 +5,7 @@ import { PayPalButtons } from '@paypal/react-paypal-js'
 import { UserDetailContext } from '@/context/UserDetailContext'
 import { useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
+import { toast } from 'sonner'
 
 function PricingModel() {
 
@@ -14,13 +15,22 @@ function PricingModel() {
     const [selectedOption,setSelectedOption]=useState();
      
     const onPaymentSuccess=async()=>{
-     
-        const token=Number(userDetail?.token)+Number(selectedOption?.value);
-        console.log(token);
-        await UpdateToken({
-            token:token,
-            userId:userDetail?._id
-        })
+        try {
+            const token=Number(userDetail?.token)+Number(selectedOption?.value);
+            await UpdateToken({
+                token:token,
+                userId:userDetail?._id
+            })
+            toast.success('Payment successful! Tokens added to your account.')
+        } catch (error) {
+            console.error('Error updating tokens:', error);
+            toast.error('Payment successful but failed to update tokens. Please contact support.')
+        }
+    }
+
+    const onError = (err) => {
+        console.error('PayPal Error:', err);
+        toast.error('Payment failed. Please try again or contact support.');
     }
 
   return (
@@ -41,7 +51,11 @@ function PricingModel() {
                 onClick={()=>{setSelectedOption(pricing)}}
                 style={{ layout: "horizontal" }}
                 onApprove={()=>onPaymentSuccess()}
-                onCancel={()=>console.log("Payment Canceled")}
+                onError={onError}
+                onCancel={()=>{
+                    console.log("Payment Canceled");
+                    toast.error('Payment was cancelled');
+                }}
                 createOrder={(data,actions)=>{
                     return actions.order.create({
                         purchase_units:[
